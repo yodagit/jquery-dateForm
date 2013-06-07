@@ -208,7 +208,7 @@ modify it under the terms of the GNU Public License.
 		$list.removeClass('date-form-hidden');
 		if ($selected.length) {
 			$list.animate({
-				scrollTop: ($selected.offset().top - ($list.height()/2) )
+				scrollTop: ($list.offset().top +  ($list.height()/2) )
 			}, 0);
 		}
 	}
@@ -221,7 +221,7 @@ modify it under the terms of the GNU Public License.
 	function selectItem ($list, index) {
 		var $selected = $list.find('li').eq(index);
 		$list.find('li.selected').removeClass('selected');
-		if ($selected && index > 0) {
+		if ($selected && index >= 0) {
 			$selected.addClass('selected');
 			$list.animate({
 				scrollTop: ($selected.offset().top - ($list.height()/2) )
@@ -349,9 +349,7 @@ modify it under the terms of the GNU Public License.
 	var methods = {
 		/**
 		@description Public method that called on Plugin initialization.
-					 It wraps HTML content and draw up and down buttons.
-					 It applies resize behavior that detaches mouse wheel event and apply mouse wheel event if needed.
-					 It applies click behavior to up and down buttons.
+					 It draws date form and applies behaviors on it.
 
 		@method init
 		@param Object containing Plugin options extends with default values of Plugin.
@@ -524,7 +522,8 @@ modify it under the terms of the GNU Public License.
 				
 				// -----------------------------------------------------------
 				// toggle list
-				$this.find('.arrow-down').click(function () {
+				$this.delegate('.arrow-down', 'click', function () {
+					console.log('click');
 					var $list = $(this).parent().parent().find('ul');
 					if ($list.hasClass('date-form-hidden')) {
 						openList($list);
