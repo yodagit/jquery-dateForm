@@ -67,8 +67,6 @@ span.arrow-down:hover {
 .list-cont li{
 	list-style-type: none;
 	margin : 0;
-	padding-top:0.1em;
-	padding-bottom:0.1em;
 	padding-right : 15px;
 	text-align : center;
 }
