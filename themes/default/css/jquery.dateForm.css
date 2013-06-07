@@ -1,0 +1,87 @@
+body, html {
+	width : 100%;
+	height : 100%;
+	
+}
+.list-cont {
+	position : relative;
+	margin-right : 5px;
+}
+.date-form-year-list, 
+.date-form-day-list, 
+.date-form-month-list {
+	display : block;
+	max-height : 15em;
+	overflow-x : hidden;
+	overflow-y : scroll;
+	position: absolute;
+	margin-top : 0;
+	margin-left : 0;
+	padding : 0;
+	width : 100%;
+	background-color: rgb(225, 230, 230);
+}
+
+
+li.selected, li:hover {
+	font-weight: bold;
+	cursor : pointer;
+	box-shadow: inset 0px 4px 8px #aaa;
+}
+.date-form-hidden {
+	display : none;
+}
+.myDateForm {
+	width :auto;
+}
+
+.myDateForm > *{
+	display : inline-block;
+}
+
+.myDateForm .date-form-input-cont {
+	display : inline-table;
+	height : 100%;
+}
+
+.myDateForm .arrow-down {
+	background-color : grey;
+	background-image: url("../images/16x16/arrow-down.png");
+	background-repeat: no-repeat;
+	background-position : center;
+	display : inline-block;
+	width : 28px;
+	vertical-align: middle;
+	height : 26px;
+	margin-top : 0;
+	margin-bottom : 0;
+	margin-left : 0;
+	margin-right : 0.3em;
+}
+.myDateForm .arrow-down:hover {
+	opacity : 0.9;
+}
+
+.myDateForm .date-form-input-cont input {
+	width : 2em;
+	text-align : center;
+	padding : 0.2em;
+	margin : 0;
+}
+.myDateForm .date-form-input-cont input.date-form-input-year {
+	width : 4em;
+}
+.myDateForm ul li{
+	list-style-type: none;
+	margin : 0;
+	padding-top:0.1em;
+	padding-bottom:0.1em;
+	padding-right : 15px;
+	text-align : center;
+}
+.myDateForm .date-form-error-cont {
+	color : red;
+}
+.myDateForm input.error {
+	border-color : red;
+}

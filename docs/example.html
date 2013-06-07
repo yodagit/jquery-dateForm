@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/css/jquery.dateForm.css" media="screen">
+		
+		<script src="../js/jquery.js" type="text/javascript"></script>
+		<script src="../js/jquery.dateForm.js" type="text/javascript"></script>
+
+		<title>dateForm plugin</title>
+		
+		<style type="text/css">
+		
+		</style>
+	</head>
+
+	<body class="date-form">
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('body').find('.myDateForm').dateForm({
+					order : "dmy",
+					min_year : 1910,
+					max_year : 2020,
+					select_year : 2025,
+					placeholder : {
+						y : "YYYY",
+						m : "mm",
+						d : "dd"
+					},
+					i18n : {
+						invalid_date : "Invalid date"
+					}
+					
+				});
+				$('body').find('.setorder').click(function () {
+					$('body').find('.myDateForm').dateForm('set_order', 'myd');
+				});
+				$('body').find('.checkdate').click(function () {
+					var dd = $('body').find('.myDateForm').dateForm('check_date');
+					console.log('valid date ? ' + dd);
+				});
+				$('body').find('.setdate').click(function () {
+					$('body').find('.myDateForm').dateForm('set_date', {d:29,m:6,y:2011});
+				});
+				$('body').find('.clear').click(function () {
+					$('body').find('.myDateForm').dateForm('clear');
+				});
+			});
+		</script>
+		
+		<div class="myDateForm"></div>
+		<input type="button" value="setOrder" class="setorder"/>
+		<input type="button" value="checkDate" class="checkdate"/>
+		<input type="button" value="setDate" class="setdate"/>
+		<input type="button" value="clear" class="clear"/>
+	</body>
+</html>
