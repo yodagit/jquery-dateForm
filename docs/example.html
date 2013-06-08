@@ -11,7 +11,12 @@
 		<title>dateForm plugin</title>
 		
 		<style type="text/css">
-		
+			.myDateForm, .error-cont {
+				display : inline-block;
+			}
+			.actions-cont {
+				margin-top : 5em;
+			}
 		</style>
 	</head>
 
@@ -19,10 +24,11 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$('body').find('.myDateForm').dateForm({
-					order : "dmy",
+					order : ["d", "m", "y"],
 					min_year : 1910,
 					max_year : 2020,
-					select_year : 1940,
+					visible_year : 1940,
+					$error_cont : $('body').find('.error-cont'),
 					placeholder : {
 						y : "YYYY",
 						m : "mm",
@@ -30,6 +36,9 @@
 					},
 					i18n : {
 						invalid_date : "Invalid date"
+					},
+					onError : function ($cont, str) {
+						$cont.append(str);
 					}
 					
 				});
@@ -49,10 +58,13 @@
 			});
 		</script>
 		
-		<div class="myDateForm"></div>
-		<input type="button" value="setOrder" class="setorder"/>
-		<input type="button" value="checkDate" class="checkdate"/>
-		<input type="button" value="setDate" class="setdate"/>
-		<input type="button" value="clear" class="clear"/>
+		<div class="myDateForm"></div><div class="error-cont"></div>
+
+		<div class="actions-cont">
+			<input type="button" value="setOrder" class="setorder"/>
+			<input type="button" value="checkDate" class="checkdate"/>
+			<input type="button" value="setDate" class="setdate"/>
+			<input type="button" value="clear" class="clear"/>
+		</div>
 	</body>
 </html>
