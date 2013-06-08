@@ -103,7 +103,6 @@ modify it under the terms of the GNU Public License.
 				opt.$m.addClass('error');
 			}
 			if (check_year === false) {
-				console.log('222');
 				opt.$y.addClass('error');
 			}
 			if (check_day === false || check_month === false || check_year === false) {
@@ -112,7 +111,6 @@ modify it under the terms of the GNU Public License.
 				}
 			}
 			else {
-				console.log('111');
 				if (d.length === 1) {
 					opt.$d.val("0" + d);
 				}
@@ -121,21 +119,11 @@ modify it under the terms of the GNU Public License.
 				}
 				if (d.length && m.length && y.length ) {
 					if (checkDate(opt) === false ) {
-						$this.find('input').addClass('error');
-						if (opt.onError) {
-							opt.onError(opt.$error_cont, opt.i18n.invalid_date);
-						}
+						doErrorField ($this.find('input').eq(0), opt);
+						doErrorField ($this.find('input').eq(1), opt);
+						doErrorField ($this.find('input').eq(2), opt);
 					}
 					else {
-						$this.find('input').removeClass('error');
-						if ($(event.target).hasClass('date-form-input-year')) {
-							if (y.length !== 4) {
-								opt.$y.addClass('error');
-								if (opt.onError) {
-									opt.onError(opt.$error_cont, opt.i18n.invalid_date);
-								}
-							}
-						}
 					}
 				}
 			}
@@ -370,6 +358,7 @@ modify it under the terms of the GNU Public License.
 		selectItem (opt.$year_list, -1);
 	}
 	function doErrorField ($field, opt) {
+		opt.$error_cont.empty();
 		$field.addClass('error');
 		if (opt.onError) {
 			opt.onError(opt.$error_cont, opt.i18n.invalid_date);
@@ -536,7 +525,6 @@ modify it under the terms of the GNU Public License.
 				}).on('focus', function () {
 					$(this).removeClass('error');
 				}).on('focusout', function (event){
-					console.log('focus out !!');
 					closeList (options.$year_list);
 					checkFields ($this, options);
 				});
