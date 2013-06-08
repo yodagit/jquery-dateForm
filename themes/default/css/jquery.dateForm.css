@@ -73,7 +73,9 @@ span.arrow-down:hover {
 .date-form-error-cont {
 	color : red;
 }
- input.date-form-input-day.error {
+input.date-form-input-day.error,
+input.date-form-input-month.error,
+input.date-form-input-year.error {
 	border-color : red;
 }
 
