@@ -14,31 +14,41 @@ modify it under the terms of the GNU Public License.
 
 @param Object
 	settings An object literal containing key/value pairs to provide optional settings.
-		@option String order that is order of date fields. For example : "dmy" for "day" and "month" and "year".
+		@option Array order that is order of date fields. For example : ["y", "m", "d"]
+		@option Int min_year is first year from list
+		@option Int max_year is last year from list
+		@option Int visible_year is the year that will be showed on opening list.
 		@option Object placeholder containing  key/value pairs that represents placeholder of date input tags.
 			@options String y that is the placeholder of year
 			@options String m that is the placeholder of month
 			@options String d that is the placeholder of day
 		@option Object i18n containing  key/value pairs that represents translations.
 			@options String invalid_date that is message that will be showed when date is invalid
+		@option Object $error_cont is a Jquery object that represents error container
 		@option Function onError that is callback loaded on invalid field or invalid date.
-			@param Object $error is a Jquery object that represents the error container
-			@param String message that is the error message.
+			@param Object $error_cont is a Jquery object that represents the error container
+			@param String message that is the error message from i18n parameter.
 			
-@example $('#dateForm').dateForm({
-			order : "mdy",
+@example 
+		$('#dateForm').dateForm({
+			order : ["y", "m", "d"],
+			min_year : 1910,
+			max_year : 2020,
+			visible_year : 1940,
+			$error_cont : $form.find('.birth-cont .field-error'),
 			placeholder : {
 				y : "YYYY",
 				m : "mm",
 				d : "dd"
 			},
 			i18n : {
-				invalid_date : "Invalid date"
+				invalid_date : "The date is invalid. Try again ..."
 			},
-			onError : function ($error, message) {
-				$error.html(message);
+			onError : function ($cont, str) {
+				$cont.append(str);
 			}
-		);
+		});
+		
 		
 		alert($('#dateForm').dateForm('check_date') ); ========> true or false
 		
@@ -54,19 +64,19 @@ modify it under the terms of the GNU Public License.
 	'use strict';
 	
 	var defaults = {
-		order : "dmy",
+		order : ["d", "m", "y"],
 		min_year : 1900,
 		max_year : 2050,
-		select_year : 2013,
+		visible_year : 2013,
 		placeholder : {
 			y : "YYYY",
 			m : "mm",
 			d : "dd"
 		},
-		$error_cont : undefined,
 		i18n : {
 			invalid_date : "Invalid date"
 		},
+		$error_cont : undefined,
 		onError : undefined
 	};
 	// ========================================================
@@ -81,7 +91,11 @@ modify it under the terms of the GNU Public License.
 		if (d.length || m.length || y.length ) {
 			var check_day = checkDay (opt.$d);
 			var check_month = checkMonth (opt.$m);
-			var check_year = checkYear (opt.$y);
+			var check_year = true;
+			
+			if (y.length === 4) {
+				check_year = checkYear (opt.$y);
+			}
 			if (check_day === false) {
 				opt.$d.addClass('error');
 			}
@@ -89,14 +103,16 @@ modify it under the terms of the GNU Public License.
 				opt.$m.addClass('error');
 			}
 			if (check_year === false) {
+				console.log('222');
 				opt.$y.addClass('error');
 			}
 			if (check_day === false || check_month === false || check_year === false) {
-				if (options.onError) {
+				if (opt.onError) {
 					opt.onError(opt.$error_cont, opt.i18n.invalid_date);
 				}
 			}
 			else {
+				console.log('111');
 				if (d.length === 1) {
 					opt.$d.val("0" + d);
 				}
@@ -166,21 +182,18 @@ modify it under the terms of the GNU Public License.
 	
 	function checkYear ($y) {
 		var y = $.trim($y.val());
-		if (y.length === 0) {
-			return true;
-		}
-		else if (y.length === 4) {
+		if (y.length) {
 			if ($.isNumeric(y) === false) {
 				return false;
 			}
+			else if (y.length === 4) {
+					return true;
+			}
 			else {
-				return true;
+				return false;
 			}
 		}
-		else {
-			
-			return false;
-		}
+		return true;
 	}
 	
 	function checkDate (opt) {
@@ -208,12 +221,22 @@ modify it under the terms of the GNU Public License.
 		}
 	}
 	
-	function openList ($list) {
-		var $selected = $list.find('.selected');
+	function openList ($list, opt) {
 		$list.removeClass('date-form-hidden');
+		var $selected = $list.find('.selected');
+		var $default = $list.find('[value="' + opt.visible_year + '"]');
+		var h;
+		
 		if ($selected.length) {
+			h = $selected.index() * $selected.height();
 			$list.animate({
-				scrollTop: ($list.offset().top +  ($list.height()/2) )
+				scrollTop: (h - ($list.height()/2))
+			}, 0);
+		}
+		else {
+			h = $default.index() * $default.height();
+			$list.animate({
+				scrollTop: (h - ($list.height()/2))
 			}, 0);
 		}
 	}
@@ -229,22 +252,21 @@ modify it under the terms of the GNU Public License.
 		if ($selected && index >= 0) {
 			$selected.addClass('selected');
 			$list.animate({
-				scrollTop: ($list.offset().top - ($list.height()/2) )
+				scrollTop: ($list.offset().top)
 			}, 0);
 		}
 	}
 	
 	function setOrder($elem, o) {
-		$elem.children().not('.date-form-error-cont').remove();
-		for (var i=3; i > 0; i--) {
-			if (o.order.substring(i,(i-1)) === "d") {
-				$elem.prepend(o.$d.parent().parent());
+		for (var i=0; i < o.order.length; i++) {
+			if (o.order[i] === "d") {
+				o.$d.parent().parent().appendTo($elem);
 			}
-			else if (o.order.substring(i,(i-1)) === "m") {
-				$elem.prepend(o.$m.parent().parent());
+			else if (o.order[i] === "m") {
+				o.$m.parent().parent().appendTo($elem);
 			}
-			else if (o.order.substring(i,(i-1)) === "y") {
-				$elem.prepend(o.$y.parent().parent());
+			else if (o.order[i] === "y") {
+				o.$y.parent().parent().appendTo($elem);
 			}
 			else {
 				$.error('DateForm::SetOrder - order is not "y" or not "m" or not "d"');
@@ -296,7 +318,7 @@ modify it under the terms of the GNU Public License.
 			opt.$y.attr('value', y);
 			selectItem(opt.$day_list, opt.$d.val()-1);
 			selectItem(opt.$month_list, opt.$m.val()-1);
-			selectItem(opt.$year_list, opt.$year_list.find('li').length - 1 -( opt.max_year - opt.$y.val()) );
+			selectItem(opt.$year_list, ( opt.max_year - opt.$y.val()) );
 		}
 		else {
 			$.error('DateForm::SetDate - Invalid date or arguments');
@@ -347,7 +369,45 @@ modify it under the terms of the GNU Public License.
 		selectItem (opt.$month_list, -1);
 		selectItem (opt.$year_list, -1);
 	}
-
+	function doErrorField ($field, opt) {
+		$field.addClass('error');
+		if (opt.onError) {
+			opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+		}
+	}
+	function onKeyUp ($this, $list, $field, checkField) {
+		var opt = $this.data('dateForm_options');
+		opt.$error_cont.empty();
+		$field.removeClass('error');
+		if ( checkField($field) === false){
+			doErrorField ($field, opt);
+		}
+		else {
+			var val = $field.val();
+			selectItem ($list, val-1);
+			if (val.length === 2) {
+				nextFocus($this,$field.parent().parent().index());
+			}
+		}
+	}
+	function generateList ($this, $list, $field, opt, count, css_class) {
+		for (var j=0; j < count; j++) {
+			$('<li class="' + css_class + '">' + (j+1) + '</li>').click(function (ev) {
+				var $li = $(this);
+				var val = parseInt($li.text(),10);
+				if (val < 10) {
+					$field.val("0" + val);
+				}
+				else {
+					$field.val(val);
+				}
+				selectItem($list, $li.index());
+				checkFields ($this, opt);
+				closeList ($list);
+				
+			}).appendTo($list);
+		}
+	}
 	// ========================================================
 	// Methods declaration
 	// ========================================================
@@ -370,7 +430,6 @@ modify it under the terms of the GNU Public License.
 			
 			return $(this).each(function() {
 				var $this	= $(this);
-//				options.$error_cont = $('<div class="date-form-error-cont"></div>').appendTo($this);
 				// -----------------------------------------------------------
 				// Day HTML and behavior
 				// -----------------------------------------------------------
@@ -385,39 +444,11 @@ modify it under the terms of the GNU Public License.
 				);
 				options.$d = options.$d_cont.find('input');
 				options.$day_list = options.$d_cont.find('ul');
-				for (var i=1; i < 32; i++) {
-					$('<li class="day-item">' + i + '</li>').click(function (ev) {
-						var $li = $(this);
-						var val = parseInt($li.text(),10);
-						if (val < 10) {
-							options.$d.val("0" + val);
-						}
-						else {
-							options.$d.val(val);
-						}
-						selectItem(options.$day_list, $li.index());
-						closeList (options.$day_list);
-						checkFields ($this, options);
-						nextFocus($this, options.$d.parent().parent().index());
-					}).appendTo(options.$day_list);
-				}
+				
+				generateList ($this, options.$day_list, options.$d, options, 31, "year-item");
 				options.$d.on('keyup', function (e) {
-					if (e.which != 9 && e.which != 16 && e.wich != 27) {
-						options.$error_cont.empty();
-						$(this).removeClass('error');
-						if (checkDay($(this)) === false){
-							$(this).addClass('error');
-							if (options.onError) {
-								options.onError(options.$error_cont, options.i18n.invalid_date);
-							}
-						}
-						else {
-							var d = $(this).val();
-							selectItem (options.$day_list, d-1);
-							if (d.length === 2) {
-								nextFocus($this,$(this).parent().parent().index());
-							}
-						}
+					if (e.which != 9 && e.which != 16 ) {
+						onKeyUp ($this, options.$day_list, $(this), checkDay);
 					}
 				}).on('focus', function () {
 					$(this).removeClass('error');
@@ -439,39 +470,13 @@ modify it under the terms of the GNU Public License.
 				);
 				options.$m = options.$m_cont.find('input');
 				options.$month_list = options.$m_cont.find('ul');
-				for (var j=1; j < 13; j++) {
-					$('<li class="month-item">' + j + '</li>').click(function (ev) {
-						var $li = $(this);
-						var val = parseInt($li.text(),10);
-						if (val < 10) {
-							options.$m.val("0" + val);
-						}
-						else {
-							options.$m.val(val);
-						}
-						selectItem(options.$month_list, $li.index());
-						checkFields ($this, options);
-						closeList (options.$month_list);
-						
-					}).appendTo(options.$month_list);
-				}
+				
+				generateList ($this, options.$month_list, options.$m, options, 12, "month-item");
 				options.$m.on('keyup', function (e) {
 					if (e.which != 9 && e.which != 16 ) {
-						options.$error_cont.empty();
-						$(this).removeClass('error');
-						if ( checkMonth($(this)) === false){
-							$(this).addClass('error');
-							if (options.onError) {
-								options.onError(options.$error_cont, options.i18n.invalid_date);
-							}
-						}
-						else {
-							selectItem (options.$month_list, $(this).val()-1);
-							if ($(this).val().length === 2) {
-								nextFocus($this,$(this).parent().parent().index());
-							}
-						}
+						onKeyUp ($this, options.$month_list, $(this), checkMonth);
 					}
+					
 				}).on('focus', function () {
 					$(this).removeClass('error');
 				}).on('focusout', function (event){
@@ -494,40 +499,44 @@ modify it under the terms of the GNU Public License.
 				options.$year_list = options.$y_cont.find('ul');
 				for (var j=options.min_year; j <= options.max_year; j++) {
 					var selected_class = "";
-					if (j  === options.select_year) {
-						selected_class = 'selected';
-					}
 					$('<li class="year-item ' + selected_class + '" value="' + j + '">' + j + '</li>').click(function (ev) {
 						var $li = $(this);
 						options.$y.val(parseInt($li.text(),10));
 						selectItem (options.$year_list, $li.index());
 						checkFields ($this, options);
 						closeList (options.$year_list);
-					}).appendTo(options.$year_list);
+					}).prependTo(options.$year_list);
 				}
+				
 				options.$y.on('keyup', function (e) {
 					if (e.which != 9 && e.which != 16) {
 						options.$error_cont.empty();
 						$(this).removeClass('error');
-						if ($(this).val().length === 4) {
-							if (checkYear($(this) ) === false){
-								$(this).addClass('error');
-								console.log('year check false !! test f onerror in options');
-								if (options.onError) {
-									options.onError(options.$error_cont, options.i18n.invalid_date);
+						var y = $(this).val();
+						if (y.length) {
+							if ($.isNumeric(y)) {
+								if (y.length === 4) {
+									if (checkYear($(this) ) === false){
+										doErrorField ($(this), options);
+									}
+									else {
+										selectItem (options.$year_list, options.$year_list.find('[value="' + y + '"]').index());
+										nextFocus($this,$(this).parent().parent().index());
+									}
 								}
 							}
 							else {
-								selectItem (options.$year_list, options.$year_list.find('[value="' + $(this).val() + '"]').index());
-								if ($(this).val() > 999) {
-									nextFocus($this,$(this).parent().parent().index());
-								}
+								doErrorField ($(this), options);
 							}
+						}
+						else {
+							selectItem (options.$year_list, -1);
 						}
 					}
 				}).on('focus', function () {
 					$(this).removeClass('error');
 				}).on('focusout', function (event){
+					console.log('focus out !!');
 					closeList (options.$year_list);
 					checkFields ($this, options);
 				});
@@ -535,10 +544,9 @@ modify it under the terms of the GNU Public License.
 				// -----------------------------------------------------------
 				// toggle list
 				$this.delegate('.arrow-down', 'click', function () {
-					console.log('click');
 					var $list = $(this).parent().parent().find('ul');
 					if ($list.hasClass('date-form-hidden')) {
-						openList($list);
+						openList($list, options);
 					}
 					else {
 						closeList ($list);
