@@ -63,12 +63,11 @@ modify it under the terms of the GNU Public License.
 			m : "mm",
 			d : "dd"
 		},
+		$error_cont : undefined,
 		i18n : {
 			invalid_date : "Invalid date"
 		},
-		onError : function ($error, message) {
-			$error.html(message);
-		}
+		onError : undefined
 	};
 	// ========================================================
 	// Privates Methods
@@ -93,7 +92,9 @@ modify it under the terms of the GNU Public License.
 				opt.$y.addClass('error');
 			}
 			if (check_day === false || check_month === false || check_year === false) {
-				opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+				if (options.onError) {
+					opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+				}
 			}
 			else {
 				if (d.length === 1) {
@@ -105,14 +106,18 @@ modify it under the terms of the GNU Public License.
 				if (d.length && m.length && y.length ) {
 					if (checkDate(opt) === false ) {
 						$this.find('input').addClass('error');
-						opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+						if (opt.onError) {
+							opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+						}
 					}
 					else {
 						$this.find('input').removeClass('error');
 						if ($(event.target).hasClass('date-form-input-year')) {
 							if (y.length !== 4) {
 								opt.$y.addClass('error');
-								opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+								if (opt.onError) {
+									opt.onError(opt.$error_cont, opt.i18n.invalid_date);
+								}
 							}
 						}
 					}
@@ -224,7 +229,7 @@ modify it under the terms of the GNU Public License.
 		if ($selected && index >= 0) {
 			$selected.addClass('selected');
 			$list.animate({
-				scrollTop: ($selected.offset().top - ($list.height()/2) )
+				scrollTop: ($list.offset().top - ($list.height()/2) )
 			}, 0);
 		}
 	}
@@ -365,7 +370,7 @@ modify it under the terms of the GNU Public License.
 			
 			return $(this).each(function() {
 				var $this	= $(this);
-				options.$error_cont = $('<div class="date-form-error-cont"></div>').appendTo($this);
+//				options.$error_cont = $('<div class="date-form-error-cont"></div>').appendTo($this);
 				// -----------------------------------------------------------
 				// Day HTML and behavior
 				// -----------------------------------------------------------
@@ -402,7 +407,9 @@ modify it under the terms of the GNU Public License.
 						$(this).removeClass('error');
 						if (checkDay($(this)) === false){
 							$(this).addClass('error');
-							options.onError(options.$error_cont, options.i18n.invalid_date);
+							if (options.onError) {
+								options.onError(options.$error_cont, options.i18n.invalid_date);
+							}
 						}
 						else {
 							var d = $(this).val();
@@ -454,7 +461,9 @@ modify it under the terms of the GNU Public License.
 						$(this).removeClass('error');
 						if ( checkMonth($(this)) === false){
 							$(this).addClass('error');
-							options.onError(options.$error_cont, options.i18n.invalid_date);
+							if (options.onError) {
+								options.onError(options.$error_cont, options.i18n.invalid_date);
+							}
 						}
 						else {
 							selectItem (options.$month_list, $(this).val()-1);
@@ -503,7 +512,10 @@ modify it under the terms of the GNU Public License.
 						if ($(this).val().length === 4) {
 							if (checkYear($(this) ) === false){
 								$(this).addClass('error');
-								options.onError(options.$error_cont, options.i18n.invalid_date);
+								console.log('year check false !! test f onerror in options');
+								if (options.onError) {
+									options.onError(options.$error_cont, options.i18n.invalid_date);
+								}
 							}
 							else {
 								selectItem (options.$year_list, options.$year_list.find('[value="' + $(this).val() + '"]').index());
