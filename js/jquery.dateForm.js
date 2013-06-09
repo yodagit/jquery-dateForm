@@ -397,6 +397,19 @@ modify it under the terms of the GNU Public License.
 			}).appendTo($list);
 		}
 	}
+	function getDate($this) {
+		if (checkDate($this.data('dateForm_options'))) {
+			var res = {
+				d : $this.data('dateForm_options').$d.val(),
+				m : $this.data('dateForm_options').$m.val(),
+				y : $this.data('dateForm_options').$y.val()
+			};
+			return res;
+		}
+		else {
+			return undefined;
+		}
+	}
 	// ========================================================
 	// Methods declaration
 	// ========================================================
@@ -575,6 +588,10 @@ modify it under the terms of the GNU Public License.
 		set_placeholder : function (args) {
 			var $this= $(this);
 			setPlaceholder($this, args);
+		},
+		get_date : function () {
+			var $this = $(this);
+			return getDate($this);
 		}
 	};
 	/**
