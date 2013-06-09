@@ -42,29 +42,49 @@
 					}
 					
 				});
-				$('body').find('.setorder').click(function () {
-					$('body').find('.myDateForm').dateForm('set_order', 'myd');
+				$('body').find('.setOrder').click(function () {
+					$(this).parent().prev().prev().dateForm('set_order', 'myd');
 				});
-				$('body').find('.checkdate').click(function () {
-					var dd = $('body').find('.myDateForm').dateForm('check_date');
-					console.log('valid date ? ' + dd);
+				$('body').find('.setDate').click(function () {
+					$(this).parent().prev().prev().dateForm('set_date', {d:29,m:6,y:2011});
 				});
-				$('body').find('.setdate').click(function () {
-					$('body').find('.myDateForm').dateForm('set_date', {d:29,m:6,y:2011});
+				$('body').find('.setPlaceholder').click(function () {
+					$(this).parent().prev().prev().dateForm('set_placeholder', {d:"gg",m:"dd",y:"xxxx"});
 				});
 				$('body').find('.clear').click(function () {
-					$('body').find('.myDateForm').dateForm('clear');
+					$(this).parent().prev().prev().dateForm('clear');
+				});
+				$('body').find('.checkDate').click(function () {		
+					var dd = $(this).parent().prev().prev().dateForm('check_date');
+					alert(dd);
+				});
+				$('body').find('.getDate').click(function () {
+					var date = $(this).parent().prev().prev().dateForm('get_date');
+					alert (date.d + " - " + date.m + " - " + date.y );
 				});
 			});
 		</script>
 		
 		<div class="myDateForm"></div><div class="error-cont"></div>
-
 		<div class="actions-cont">
-			<input type="button" value="setOrder" class="setorder"/>
-			<input type="button" value="checkDate" class="checkdate"/>
-			<input type="button" value="setDate" class="setdate"/>
+			<input type="button" value="set order" class="setOrder"/>
+			<input type="button" value="set date" class="setDate"/>
+			<input type="button" value="set placeholder" class="setPlaceholder"/>
 			<input type="button" value="clear" class="clear"/>
+
+			<input type="button" value="check date" class="checkDate"/>
+			<input type="button" value="get date" class="getDate"/>
+		</div>
+
+		<div class="myDateForm"></div><div class="error-cont"></div>
+		<div class="actions-cont">
+			<input type="button" value="set order" class="setOrder"/>
+			<input type="button" value="set date" class="setDate"/>
+			<input type="button" value="set placeholder" class="setPlaceholder"/>
+			<input type="button" value="clear" class="clear"/>
+
+			<input type="button" value="check date" class="checkDate"/>
+			<input type="button" value="get date" class="getDate"/>
 		</div>
 	</body>
 </html>
