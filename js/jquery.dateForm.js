@@ -314,8 +314,8 @@ modify it under the terms of the GNU Public License.
 	}
 	function setPlaceholder ($this, args) {
 		var opt = $this.data('dateForm_options');
-		for (key in args) {
-			if (key === "d") {
+		for (var key in args) {
+			if (key == "d") {
 				if (args[key].length <= 2) {
 					opt.$d.attr('placeholder' , args.d);
 				}
@@ -323,7 +323,7 @@ modify it under the terms of the GNU Public License.
 					$.error('DateForm::setPlaceholder - The value of placeholder of day must be contains two characters max.');
 				}
 			}
-			if (key === "m") {
+			else if (key == "m") {
 				if (args[key].length <= 2) {
 					opt.$m.attr('placeholder' , args.m);
 				}
@@ -331,7 +331,7 @@ modify it under the terms of the GNU Public License.
 					$.error('DateForm::setPlaceholder - The value of placeholder of month must be contains two characters max.');
 				}
 			}
-			if (key === "y") {
+			else if (key == "y") {
 				if (args[key].length <= 4) {
 					opt.$y.attr('placeholder' , args.y);
 				}
@@ -343,9 +343,6 @@ modify it under the terms of the GNU Public License.
 				$.error('DateForm::setPlaceholder - key of args must be "d" or "m" or "y"');
 			}
 		}
-		
-		opt.$m.attr('value',m_str);
-		opt.$y.attr('value', y);
 	}
 
 	function clear ($this) {
@@ -422,16 +419,17 @@ modify it under the terms of the GNU Public License.
 		@param Object containing Plugin options extends with default values of Plugin.
 		**/
 		init : function(args) {
-			var options = $.extend({}, defaults, args);
-			if (args.placeholder) {
-				options.placeholder = $.extend({}, defaults.placeholder, args.placeholder);
-			}
-			if (args.i18n) {
-				options.i18n = $.extend({}, defaults.i18n , args.i18n);
-			}
+			
 			
 			return $(this).each(function() {
 				var $this	= $(this);
+				var options = $.extend({}, defaults, args);
+				if (args.placeholder) {
+					options.placeholder = $.extend({}, defaults.placeholder, args.placeholder);
+				}
+				if (args.i18n) {
+					options.i18n = $.extend({}, defaults.i18n , args.i18n);
+				}
 				// -----------------------------------------------------------
 				// Day HTML and behavior
 				// -----------------------------------------------------------
